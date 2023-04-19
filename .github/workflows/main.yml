@@ -1,23 +1,19 @@
 name: Code Review
 
+permissions:
+  contents: read
+  pull-requests: write
+
 on:
   pull_request:
-    types: [opened]
-  issue_comment:
-    types: [created, edited]
+    types: [opened, reopened]
 
 jobs:
-  code-review:
-    if: |
-      github.event_name == 'pull_request' ||
-          startsWith(github.event.comment.body, 'chatgpt')
+  test:
     runs-on: ubuntu-latest
     steps:
-    - name: OpenAI ChatGPT Code Review
-      uses: adshao/chatgpt-code-review-action@v0.2.5
-      with:
-        PROGRAMMING_LANGUAGE: 'JavaScript'
-        REVIEW_COMMENT_PREFIX: 'chatgpt:'
-        FULL_REVIEW_COMMENT: 'chatgpt'
-        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - uses: anc95/ChatGPT-CodeReview@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_TOKEN }}
+          LANGUAGE: Chinese
